@@ -1,8 +1,11 @@
 <template>
   <section>
     <div class="page-header">
-      <h1 class="page-title">{{ config.title }}</h1>
-      <el-button type="primary" :icon="Plus" @click="openCreate">新增</el-button>
+      <div>
+        <h1 class="page-title">{{ config.title }}</h1>
+        <p class="page-subtitle">共 {{ rows.length }} 条记录，当前筛选 {{ filteredRows.length }} 条</p>
+      </div>
+      <el-button type="primary" :icon="Plus" @click="openCreate">新增记录</el-button>
     </div>
 
     <div class="content-panel">
@@ -20,9 +23,12 @@
           <el-button :icon="Search" @click="applyFilter">查询</el-button>
           <el-button :icon="Refresh" @click="loadData">刷新</el-button>
         </div>
+        <div class="toolbar-right">
+          <el-tag effect="plain">数据库实时读取</el-tag>
+        </div>
       </div>
 
-      <el-table v-loading="loading" :data="pagedRows" border stripe height="560">
+      <el-table v-loading="loading" :data="pagedRows" stripe height="560" class="crud-table">
         <el-table-column
           v-for="column in config.columns"
           :key="column.prop"
@@ -40,8 +46,10 @@
         </el-table-column>
         <el-table-column label="操作" width="160" fixed="right">
           <template #default="{ row }">
-            <el-button size="small" :icon="Edit" @click="openEdit(row)">修改</el-button>
-            <el-button size="small" type="danger" :icon="Delete" @click="remove(row)">删除</el-button>
+            <div class="row-actions">
+              <el-button size="small" :icon="Edit" @click="openEdit(row)">修改</el-button>
+              <el-button size="small" type="danger" :icon="Delete" @click="remove(row)">删除</el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -225,9 +233,26 @@ onMounted(loadData)
 </script>
 
 <style scoped>
+.crud-table {
+  overflow: hidden;
+  border: 1px solid #edf1f6;
+}
+
+.row-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .pagination-row {
   display: flex;
   justify-content: flex-end;
   margin-top: 14px;
+}
+
+@media (max-width: 760px) {
+  .toolbar-left {
+    flex-wrap: wrap;
+  }
 }
 </style>
