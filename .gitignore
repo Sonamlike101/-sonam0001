@@ -1,0 +1,26 @@
+# OS and editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Logs
+*.log
+backend/*.log
+frontend/*.log
+
+# Java / Maven
+backend/target/
+*.class
+
+# Node / Vue
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Environment and local secrets
+.env
+.env.*
+!.env.example
+application-local.yml
+
