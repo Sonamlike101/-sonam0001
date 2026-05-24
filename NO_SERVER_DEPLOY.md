@@ -1,29 +1,33 @@
-# 没有服务器时的真实部署方案
+# 无服务器真实部署
 
-GitHub 不能长期运行 Spring Boot 和 MySQL。没有自己的服务器时，可以使用云托管平台：
+结论：GitHub 不能运行 Spring Boot 和 MySQL。没有服务器时，用下面组合：
 
 - 前端：GitHub Pages
-- 后端：Render Web Service
-- 数据库：Aiven for MySQL
+- 后端：Render
+- 数据库：Aiven MySQL
 
-## 1. 创建云 MySQL
+## 你现在要做
 
-在 Aiven 创建 MySQL 服务，记录这些连接信息：
+1. 打开 Aiven，创建 MySQL。
+2. 打开 Render，创建 Web Service。
+3. 把 Aiven 的 MySQL 信息填到 Render 环境变量。
+4. 把 Render 后端地址填到 GitHub Actions 变量。
+5. 重新运行 GitHub Pages 部署。
+
+## Aiven MySQL
+
+创建 MySQL 后记录：
 
 ```text
-Host
-Port
-Database
-User
-Password
-SSL mode: REQUIRED
+DB_HOST=
+DB_PORT=
+DB_NAME=dormitory_system
+DB_USERNAME=
+DB_PASSWORD=
+DB_SSL_MODE=REQUIRED
 ```
 
-Aiven 的 Java JDBC 示例使用 `sslmode=require`，本项目已支持通过 `DB_SSL_MODE=REQUIRED` 连接云 MySQL。
-
-## 2. 导入数据库 SQL
-
-连接 Aiven MySQL 后，按顺序执行：
+导入 SQL 顺序：
 
 ```text
 database/01_create_tables.sql
@@ -33,12 +37,12 @@ database/04_triggers.sql
 database/05_procedures.sql
 ```
 
-## 3. 部署后端到 Render
+## Render 后端
 
-在 Render 新建 Web Service：
+新建 Web Service：
 
 ```text
-Source: GitHub 仓库 Sonamlike101/-sonam0001
+Source: Sonamlike101/-sonam0001
 Environment: Docker
 Dockerfile Path: ./backend/Dockerfile
 Docker Context: ./backend
@@ -55,30 +59,34 @@ DB_PASSWORD=你的Aiven Password
 DB_SSL_MODE=REQUIRED
 ```
 
-部署完成后测试：
+后端测试地址：
 
 ```text
 https://你的render服务.onrender.com/api/health
 https://你的render服务.onrender.com/api/dashboard
 ```
 
-## 4. 让 GitHub Pages 前端连接后端
+## GitHub Pages 前端
 
-在 GitHub 仓库设置：
+进入仓库：
 
 ```text
 Settings -> Secrets and variables -> Actions -> Variables
 ```
 
-新增变量：
+新增：
 
 ```text
 VITE_API_BASE_URL=https://你的render服务.onrender.com/api
 ```
 
-然后重新运行 GitHub Actions 的 `Deploy Frontend to GitHub Pages`。
+然后运行：
 
-## 5. 访问系统
+```text
+Actions -> Deploy Frontend to GitHub Pages -> Run workflow
+```
+
+最终访问：
 
 ```text
 https://sonamlike101.github.io/-sonam0001/
